@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthProvider, AuthContext } from './AuthContext';
+import { AuthProvider, AuthContext } from '../AuthContext';
 import { render } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 
