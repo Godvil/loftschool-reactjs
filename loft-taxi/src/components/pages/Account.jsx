@@ -1,6 +1,13 @@
 import React from 'react';
 import Map from './sections/Map';
 import Profile from './sections/Profile';
+import { withAuth } from '../../AuthContext'
+import PropTypes from 'prop-types';
+
+const PAGES = {
+    map: (props) => <Map {...props}/>,
+    profile: (props) => <Profile {...props}/>
+}
 
 class Account extends React.Component {
     constructor(props) {
@@ -8,17 +15,29 @@ class Account extends React.Component {
         this.state = {
             currentSection: "map"
         }
+
+        this.defaultProperties.changeSection = this.defaultProperties.changeSection.bind(this);
+    }
+
+    static propTypes = {
+        defaultProperties: PropTypes.shape({
+            navigateTo: PropTypes.func.isRequired
+        }).isRequired,
+        logOut: PropTypes.func.isRequired,
+        isLoggedIn: PropTypes.bool.isRequired
+    }
+
+    unauthenticate = () => {
+        this.props.logOut();
     }
 
     defaultProperties = {
         changeSection: (section) => {
-            this.setState({currentSection: section})
+            if(!this.props.isLoggedIn)
+                this.props.defaultProperties.navigateTo("entrance")
+            else
+                this.setState({ currentSection: section })
         }
-    }
-
-    PAGES = {
-        map: <Map defaultProperties={this.defaultProperties}/>,
-        profile: <Profile defaultProperties={this.defaultProperties}/>
     }
 
     render() {
@@ -29,14 +48,17 @@ class Account extends React.Component {
                         <div className="nav_list">
                             <div className="style_list_nav" onClick={() => this.defaultProperties.changeSection("map")}>Карта</div>
                             <div className="style_list_nav" onClick={() => this.defaultProperties.changeSection("profile")}>Профиль </div>
-                            <div className="style_list_nav" onClick={() => this.props.defaultProperties.navigateTo("entrance")}>Выйти</div>
+                            <div className="style_list_nav" onClick={() => this.unauthenticate()}>Выйти</div>
                         </div>
                     </div>
                     <div className="account_section">
-                        {this.PAGES[this.state.currentSection]}
+                        {PAGES[this.state.currentSection]({defaultProperties: this.defaultProperties})}
                     </div>
                 </div>
         )
     }
 }
-export default Account;
+
+const AccountWithAuth = withAuth(Account);
+
+export default AccountWithAuth;
