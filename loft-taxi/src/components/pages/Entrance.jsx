@@ -19,12 +19,6 @@ class Entrance extends React.Component {
         authenticate: PropTypes.func.isRequired,
         isLoggedIn: PropTypes.bool.isRequired
     }
-    
-
-    showRefContent = () => {
-        console.log('govno')
-        console.log(this.entranceRef.current.value);
-      };
 
     authenticate = () => {
         this.props.authenticate(this.state.username, this.state.password)
